@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  runner:
+    image: gitea/act_runner:latest
+    container_name: sovereign-runner
+    restart: always
+    pull_policy: always
+    environment:
+      - GITEA_INSTANCE_URL=http://192.168.1.100:3000  # ← your Gitea IP
+      - GITEA_RUNNER_REGISTRATION_TOKEN=SOVEREIGN-TOKEN-HERE
+      - GITEA_RUNNER_NAME=sovereign-runner
+      - GITEA_RUNNER_LABELS=ubuntu-latest,self-hosted
+    volumes:
+      - runner-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  runner-data:

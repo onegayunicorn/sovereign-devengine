@@ -1,74 +1,99 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+
+const PHI = 1.61803399
+const SCHUMANN = 7.83
+const HANDSHAKE_URL = import.meta.env.VITE_HANDSHAKE_URL || 'http://127.0.0.1:5000'
 
 const CHANNELS = [
-  { name: 'Base',  freq: '7.83 Hz',   color: '#336699' },
-  { name: 'Violet', freq: '7.83×φ',  color: '#b333e6' },
-  { name: 'Life',  freq: '15.66 Hz',  color: '#33e666' },
-  { name: 'Gold',  freq: '7.83×φ²', color: '#ffd933' },
-  { name: 'Field', freq: '7.83÷φ',  color: '#80e6b3' },
+  { name: 'Base',   freq: SCHUMANN,             color: '#3b82f6' },
+  { name: 'Violet', freq: SCHUMANN * PHI,       color: '#a855f7' },
+  { name: 'Life',   freq: SCHUMANN * 2,         color: '#22c55e' },
+  { name: 'Gold',   freq: SCHUMANN * PHI * PHI, color: '#eab308' },
+  { name: 'Field',  freq: SCHUMANN / PHI,       color: '#34d399' },
 ]
 
 export default function App() {
-  const [paired, setPaired] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(0)
-  const [log, setLog] = useState(['Sovereign Dev Engine ready.'])
+  const [pairing, setPairing] = useState({ paired: false, reachable: false })
+  const [deploying, setDeploying] = useState(false)
+  const [log, setLog] = useState([{ t: 'boot', m: 'Sovereign Dev Engine online.' }])
+
+  const push = (m) => setLog(p => [...p.slice(-80), { t: new Date().toLocaleTimeString(), m }])
 
   useEffect(() => {
-    // Poll handshake status if available
-    const id = setInterval(async () => {
+    let alive = true
+    const poll = async () => {
       try {
-        const r = await fetch('http://localhost:5000/status')
-        const d = await r.json()
-        setPaired(d.paired)
-        setTimeLeft(d.time_remaining)
-      } catch {}
-    }, 2000)
-    return () => clearInterval(id)
+        const r = await fetch(`${HANDSHAKE_URL}/status`)
+        const j = await r.json()
+        if (alive) setPairing({ ...j, reachable: true })
+      } catch {
+        if (alive) setPairing(p => ({ ...p, reachable: false }))
+      }
+    }
+    poll()
+    const id = setInterval(poll, 3000)
+    return () => { alive = false; clearInterval(id) }
   }, [])
 
-  const addLog = (msg) => setLog(prev => [...prev.slice(-20), msg])
+  const deploy = async () => {
+    setDeploying(true)
+    push('▶ Deploy → Xbox :11443 …')
+    try {
+      const r = await fetch(`${HANDSHAKE_URL}/paean/deploy`, { method: 'POST' })
+      const j = await r.json()
+      push(j.msg || '✔ Deploy triggered — check your Xbox')
+    } catch {
+      push('✖ Bridge offline — run handshake.py first')
+    } finally {
+      setDeploying(false)
+    }
+  }
+
+  const paired = pairing.reachable && pairing.paired
 
   return (
-    <div className="app">
-      <header>
-        <h1>⚡ SOVEREIGN DEV ENGINE</h1>
-        <p className="tagline">Zero-Cloud · Local-First · PHOTONIC-Ω</p>
+    <div className="shell">
+      <header className="topbar">
+        <h1>⚡ Sovereign <span>Dev Engine</span></h1>
+        <div className="pills">
+          <span className={`pill ${paired ? 'ok' : 'bad'}`}>
+            {paired ? '● Paired' : '○ Unpaired'}
+          </span>
+          <span className={`pill ${pairing.reachable ? 'ok' : 'bad'}`}>
+            {pairing.reachable ? '● Daemon Live' : '○ Offline'}
+          </span>
+        </div>
       </header>
 
-      <section className="status-grid">
-        <div className={`card ${paired ? 'ok' : 'warn'}`}>
-          <h3>Handshake</h3>
-          <p>{paired ? '✅ Paired' : '⏳ Awaiting PIN'}</p>
-          {!paired && timeLeft > 0 && <small>{timeLeft}s remaining</small>}
-        </div>
-        <div className="card">
-          <h3>Xbox Portal</h3>
-          <p>Port 11443</p>
-          <button onClick={() => addLog('Deploy triggered — check console')}>Deploy</button>
-        </div>
-        <div className="card">
-          <h3>Build</h3>
-          <p>Ready</p>
-          <button onClick={() => addLog('Build started...')}>Build</button>
-        </div>
-      </section>
-
       <section className="channels">
-        <h2>PHOTONIC-Ω Channels</h2>
-        <div className="channel-row">
+        <h2>PHOTONIC-Ω · 5-Channel Resonance</h2>
+        <div className="grid">
           {CHANNELS.map(c => (
-            <div key={c.name} className="channel" style={{ borderColor: c.color }}>
-              <span className="dot" style={{ background: c.color }} />
-              <strong>{c.name}</strong>
-              <small>{c.freq}</small>
+            <div className="chan" key={c.name}>
+              <i className="dot" style={{
+                background: c.color,
+                animationDuration: `${(1/(c.freq/4)).toFixed(2)}s`
+              }} />
+              <span className="cname">{c.name}</span>
+              <span className="cfreq">{c.freq.toFixed(2)} Hz</span>
             </div>
           ))}
         </div>
       </section>
 
+      <section className="deploy">
+        <button onClick={deploy} disabled={deploying}>
+          {deploying ? 'Deploying…' : '🎮 Deploy to Xbox'}
+        </button>
+      </section>
+
       <section className="terminal">
-        <h3>Log</h3>
-        <pre>{log.join('\n')}</pre>
+        <div className="tbar">Build Log</div>
+        <div className="tbody">
+          {log.map((l, i) => (
+            <div key={i}><span className="ts">[{l.t}]</span> {l.m}</div>
+          ))}
+        </div>
       </section>
     </div>
   )

@@ -1,5 +1,5 @@
 name: Sovereign Build
-run-name: ⚡ GitHub — ${{ github.sha }}
+run-name: ⚡ Gitea — ${{ gitea.sha }}
 
 on:
   push:
@@ -15,23 +15,16 @@ jobs:
       - name: Setup Env
         run: cp .env.example .env
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
       - name: Python Deps
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip || true
           pip install -r requirements.txt
 
-      - name: Set up Node
+      - name: Node Deps
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-
-      - name: Node Deps
-        run: npm ci || npm install
+          node-version: 20
+      - run: npm ci || npm install
 
       - name: Build
         run: npm run build
@@ -41,6 +34,3 @@ jobs:
           name: sovereign-build
           path: dist/
           retention-days: 7
-
-      - name: Notify
-        run: echo "✅ Build complete — ready to deploy"

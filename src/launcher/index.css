@@ -1,107 +1,62 @@
 :root {
-  --bg: #0a0a0f;
-  --card: #14141f;
-  --text: #e0e0ff;
-  --accent: #00d4ff;
-  --ok: #33e666;
-  --warn: #ffaa33;
+  --bg: #05070d; --panel: #0b1220; --line: #1e2a44; --txt: #dbe6ff;
+  --ok: #34d399; --bad: #f87171; --accent: #38bdf8;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
+  margin: 0; min-height: 100vh;
+  background: radial-gradient(90% 70% at 50% 0%, #0a1428, var(--bg));
+  color: var(--txt); font: 14px/1.5 ui-monospace, "SF Mono", Menlo, monospace;
 }
-
-.app {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 2rem;
+.shell { max-width: 960px; margin: 0 auto; padding: 24px; }
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
 }
-
-header {
-  text-align: center;
-  margin-bottom: 2rem;
+h1 { font-size: 20px; letter-spacing: .5px; }
+h1 span { color: var(--accent); }
+.pills { display: flex; gap: 8px; }
+.pill {
+  padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); font-size: 12px;
 }
-
-header h1 {
-  font-size: 1.8rem;
-  letter-spacing: 0.05em;
+.pill.ok { color: var(--ok); border-color: #14532d; background: #052e1a; }
+.pill.bad { color: var(--bad); border-color: #7f1d1d; background: #2a0a0a; }
+.channels, .terminal {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px; margin-top: 20px;
 }
-
-.tagline {
-  opacity: 0.7;
-  margin-top: 0.4rem;
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #7c8db5; margin-bottom: 12px; }
+.grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.chan {
+  display: flex; align-items: center; gap: 10px;
+  background: #060b16; border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px;
 }
-
-.status-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.card {
-  background: var(--card);
-  border-radius: 12px;
-  padding: 1.2rem;
-  border: 1px solid #222;
-}
-
-.card.ok { border-color: var(--ok); }
-.card.warn { border-color: var(--warn); }
-
-.card h3 { font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.4rem; }
-.card button {
-  margin-top: 0.6rem;
-  background: var(--accent);
-  color: #000;
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.channels h2 { margin-bottom: 0.8rem; font-size: 1.1rem; }
-
-.channel-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-bottom: 2rem;
-}
-
-.channel {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--card);
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  border: 1px solid;
-}
-
 .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  width: 12px; height: 12px; border-radius: 50%;
+  animation: pulse 1s infinite ease-in-out;
+  box-shadow: 0 0 12px currentColor;
 }
-
-.terminal {
-  background: #0d0d14;
-  border-radius: 8px;
-  padding: 1rem;
-  border: 1px solid #222;
+@keyframes pulse {
+  0%,100% { transform: scale(.7); opacity: .5; }
+  50% { transform: scale(1.15); opacity: 1; }
 }
-
-.terminal pre {
-  font-family: 'Cascadia Code', 'Fira Code', monospace;
-  font-size: 0.85rem;
-  white-space: pre-wrap;
-  max-height: 200px;
-  overflow-y: auto;
+.deploy { margin-top: 20px; }
+.deploy button {
+  width: 100%; padding: 14px; font-size: 15px; font-weight: 600;
+  color: #04101f; background: linear-gradient(90deg, #38bdf8, #34d399);
+  border: 0; border-radius: 10px; cursor: pointer; transition: transform .2s;
+}
+.deploy button:disabled { opacity: .5; cursor: progress; transform: none; }
+.deploy button:hover { transform: scale(1.01); }
+.tbar { font-size: 12px; color: #7c8db5; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
+.tbody {
+  height: 180px; overflow-y: auto; background: #04070e;
+  border: 1px solid var(--line); border-radius: 8px; padding: 10px;
+}
+.ts { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+@media (max-width: 700px) {
+  .grid { grid-template-columns: 1fr 1fr; }
 }

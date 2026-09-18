@@ -6,38 +6,49 @@
 
 ## ✨ What It Is
 - 🔐 **Zero-Cloud Handshake** — Pair devices with 6-char PIN, no account needed
-- 🎮 **Xbox Dev Mode Sideload** — Push builds directly to your console over local WiFi (`:11443`)
-- 💫 **PHOTONIC-Ω Render Core** — RYYB clarity · Sobel edge protection · Schumann 7.83 Hz pulse · Golden Ratio φ modulation
-- 🏠 **Local-First CI/CD** — Gitea/Forgejo runner → build → deploy → run — all yours
-- 📱 **Samsung A17 / Termux Ready** — Develop, test, deploy from your phone
+- 🤖 **Claw Agent** — Local CLI orchestrator (`status` / `build`)
+- 🌐 **Paean Bridge** — AI workspace ↔ local deploy & sync (`/paean/*`)
+- 🎮 **Xbox Dev Mode Sideload** — Push builds over local WiFi (`:11443`)
+- 💫 **PHOTONIC-Ω Render Core** — Schumann 7.83 Hz · Golden Ratio φ · 5-channel tint
+- 🏠 **Local-First CI/CD** — GitHub Actions + Gitea self-hosted runner
+- 🎮 **Godot 3.5.x UWP path** — Documented templates + .appx fix
 
 ## 🚀 Quick Start
 ```bash
-# Pair your device
-python3 src/core/handshake.py
+git clone https://github.com/onegayunicorn/sovereign-devengine.git
+cd sovereign-devengine
+cp .env.example .env          # fill XBOX_* values
+make setup
 
-# Build & run
-make dev
+# Terminal 1 — pairing + Paean bridge
+make handshake
 
-# Deploy to Xbox
-make deploy-xbox
+# Terminal 2 — launcher UI
+make dev                      # → http://0.0.0.0:8080
+
+# Optional
+make status                   # Claw agent health
+make deploy-xbox              # build + sideload
 ```
 
 ## 📋 Architecture
 
-| Layer | Tech |
-|-------|------|
-| Pairing | Flask ephemeral PIN → scoped PAT |
-| Rendering | WebGL/Three.js — dual-pass FBO bloom + 5-channel tint |
-| Console | Xbox Device Portal REST API — port 11443 |
-| CI/CD | GitHub Actions / Gitea → UWP .msix builder |
-| Sensors | RYYB edge-aware reconstruction — 69.5% fidelity gain |
+| Layer | Tech / Port |
+|-------|-------------|
+| Pairing | Flask ephemeral PIN → scoped PAT (`:5000`) |
+| Paean Bridge | `/paean/deploy`, `/paean/sync` |
+| Claw Agent | `python src/core/claw_agent.py status\|build` |
+| Rendering | WebGL / GLSL — dual-pass + 5-channel tint |
+| Launcher | React + Vite (`:8080`) |
+| Console | Xbox Device Portal REST (`:11443`) |
+| CI/CD | GitHub Actions + Gitea act_runner |
 
-## 🤝 Built With
-- PHOTONIC-Ω — Light & resonance pipeline
-- Samsung A17 / Termux — Mobile dev workspace
-- Xbox Dev Mode — Living room console target
-- You — The architect 🔥
+## 📚 Docs
+- [Handshake Protocol](docs/handshake-protocol.md)
+- [Xbox Dev Mode](docs/xbox-dev-mode.md)
+- [Godot UWP Guide](docs/godot-uwp-guide.md)
+- [Gitea Runner Setup](docs/gitea-runner-setup.md)
+- [PHOTONIC-Ω Rendering](docs/photonic-rendering.md)
 
 ---
 
