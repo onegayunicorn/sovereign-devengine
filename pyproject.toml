@@ -1,0 +1,14 @@
+[project]
+name = "sovereign-devengine"
+version = "1.0.1"
+description = "Local-first sovereign device pairing and Xbox Dev Mode deployment toolkit"
+requires-python = ">=3.11"
+dependencies = [
+  "flask>=3.0,<4",
+  "requests>=2.31,<3",
+  "python-dotenv>=1.0,<2",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

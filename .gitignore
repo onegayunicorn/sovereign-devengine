@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Node/Vite
+node_modules/
+dist/
+
+# Local configuration and credentials
+.env
+.sovereign/
+*.log
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store

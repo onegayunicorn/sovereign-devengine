@@ -27,7 +27,8 @@ def generate_pin():
 
 PIN = generate_pin()
 PIN_EXPIRY = time.time() + 300  # 5 minutes
-TOKEN_STORE = os.path.expanduser("~/.sovereign/credentials")
+TOKEN_STORE = os.path.expanduser(os.getenv("SOVEREIGN_TOKEN_STORE", "~/.sovereign/credentials"))
+PIN_USED = False
 
 print(f"""
 ╔════════════════════════════════════════
@@ -44,21 +45,28 @@ print(f"""
 
 @app.route('/pair', methods=['POST'])
 def pair():
+    global PIN_USED
     if time.time() > PIN_EXPIRY:
         return jsonify({"status": "expired", "msg": "PIN timed out — restart"}), 400
+    if PIN_USED:
+        return jsonify({"status": "denied", "msg": "PIN already used — restart"}), 409
 
     data = request.get_json(silent=True) or {}
     if data.get("pin", "").upper() != PIN:
         return jsonify({"status": "denied", "msg": "Incorrect code"}), 401
 
     token = data.get("token")
-    if not token:
+    if not isinstance(token, str) or not token.strip():
         return jsonify({"status": "error", "msg": "Missing token"}), 400
 
-    os.makedirs(os.path.dirname(TOKEN_STORE), exist_ok=True)
-    with open(TOKEN_STORE, 'w') as f:
-        f.write(token)
+    token_path = Path(TOKEN_STORE)
+    token_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = token_path.with_suffix(token_path.suffix + ".tmp")
+    temporary.write_text(token, encoding="utf-8")
+    os.chmod(temporary, 0o600)
+    temporary.replace(token_path)
     os.chmod(TOKEN_STORE, 0o600)
+    PIN_USED = True
 
     print("✅ Device paired — credentials stored")
     return jsonify({"status": "paired", "msg": "Sovereign link established"})

@@ -28,6 +28,8 @@ def bridge_status():
 def sync():
     """Paean workspace → local file sync — SANDBOXED to repo root"""
     files = (request.get_json(silent=True) or {}).get("files", {})
+    if not isinstance(files, dict):
+        return jsonify({"status": "error", "msg": "files must be an object"}), 400
     written = []
     skipped = []
 
