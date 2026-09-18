@@ -1,0 +1,3 @@
+# Optional — only for quantum workflows
+# qiskit>=1.0.0
+# Uncomment when you need local QPU simulation experiments

@@ -2,7 +2,7 @@
 
 ## Version Selection
 - ✅ **Godot 3.5.3** — Last stable with native UWP export
-- ❌ Godot 4.x — UWP removed; use GDK / PC export path instead
+- ❌ Godot 4.x — UWP removed; use **GDK / Xbox on PC** path instead (see `godot-gdk-guide.md`)
 
 ## Install Export Templates
 1. Download: `Godot_v3.5.3-stable_export_templates.tpz`
@@ -30,6 +30,6 @@
 - Manifest type = **App** → ~1 GB → silent crash
 - In Godot export → set **Game** as target type
 
-## References
-- Official Godot 3.x export docs
-- Xbox Device Portal port **11443**
+## See also
+- `docs/godot-gdk-guide.md` — Godot 4 + Microsoft GDK (Xbox on PC)
+- `docs/xbox-device-portal-api.md` — REST endpoints used by sideload

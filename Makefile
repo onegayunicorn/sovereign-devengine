@@ -2,7 +2,7 @@
 
 # ── Configuration ──
 DEVICE_IP ?= 0.0.0.0
-XBOX_IP ?= $(shell grep XBOX_IP .env 2>/dev/null | cut -d'=' -f2)
+XBOX_IP ?= $(shell grep XBOX_IP .env 2>/dev/null | cut -d'=' -f2 || echo 192.168.1.50)
 
 all: dev
 
